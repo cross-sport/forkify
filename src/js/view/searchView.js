@@ -16,9 +16,9 @@ const convertTitle = (title, limit = 17) => {
       }
       return acc + cur.length;
     }, 0);
-    return `title`;
+    return `${newTitle.join(" ")}...`; //join არის split ოპერატორის შემობრუნებული ვარიანტი
   }
-  return `${newTitle.join(" ")}...`; //join არის split ოპერატორის შემობრუნებული ვარიანტი
+  return title;
 };
 
 const renderRecipe = (recipe) => {
