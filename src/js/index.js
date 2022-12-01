@@ -1,6 +1,10 @@
 // Global app controller
+import Recipe from "./models/Recipe";
 import Search from "./models/Search";
 import { clearLoader, elements, renderLoader } from "./view/base"; // import დესტრუქტურიზაციის ხასიათით
+// import { renderRecipe } from "./view/recipeView";
+import * as recipeView from "./view/recipeView";
+
 import * as searchView from "./view/searchView"; //import
 
 const state = {};
@@ -23,6 +27,22 @@ const controlSearch = async () => {
   }
 };
 
+//recipe
+
+const controlRecipe = async () => {
+  const id = window.location.hash.replace("#", " ");
+
+  if (id) {
+    recipeView.clearRecipe();
+    renderLoader(elements.Recipe);
+    state.recipe = new Recipe(id);
+    await state.recipe.getRecipe();
+    clearLoader(elements.Recipe);
+    // renderRecipe(state.recipe);
+    recipeView.renderRecipe(state.recipe);
+  }
+};
+
 elements.searchForm.addEventListener("submit", (e) => {
   e.preventDefault();
   controlSearch();
@@ -35,4 +55,8 @@ elements.serchResultPages.addEventListener("click", (e) => {
     searchView.clearResult();
     searchView.renderResult(state.search.result, goToPage);
   }
+});
+
+window.addEventListener("hashchange", () => {
+  controlRecipe();
 });
