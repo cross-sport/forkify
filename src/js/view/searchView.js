@@ -6,6 +6,15 @@ export const clearResult = () => {
   elements.serchResultList.innerHTML = " ";
   elements.serchResultPages.innerHTML = " ";
 };
+//active click
+export const activeLinkStyle = (id) => {
+  const resArr = [...document.querySelectorAll(".results__link")];
+  resArr.map((el) => el.classList.remove("results__link--active"));
+  console.log(`a[href="#${id}"]`);
+  document
+    .querySelector(`a[href="#${id}"]`)
+    .classList.add("results__link--active");
+};
 
 const convertTitle = (title, limit = 17) => {
   const newTitle = [];
