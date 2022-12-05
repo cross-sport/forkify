@@ -10,7 +10,7 @@ export const clearResult = () => {
 export const activeLinkStyle = (id) => {
   const resArr = [...document.querySelectorAll(".results__link")];
   resArr.map((el) => el.classList.remove("results__link--active"));
-  console.log(`a[href="#${id}"]`);
+
   document
     .querySelector(`a[href="#${id}"]`)
     .classList.add("results__link--active");
@@ -49,7 +49,6 @@ const renderRecipe = (recipe) => {
 //buttons pagenition ფენჯინეიშენის მარქაფი
 
 const createButton = (page, type) => {
-  console.log(type);
   return `<button class="btn-inline results__btn--${type}" data-goto=${
     type == "prev" ? page - 1 : page + 1
   }>

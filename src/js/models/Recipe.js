@@ -18,4 +18,71 @@ export default class Recipe {
       alert(error);
     }
   }
+  parseIngredients() {
+    const newIngredient = this.ingredients.map((el) => {
+      const unitsLong = [
+        "tablespoons",
+        "tablespoon",
+        "ounces",
+        "ounce",
+        "teaspoons",
+        "teaspoon",
+        "cups",
+      ];
+      const unitShort = ["tsp", "tsp", "tbsp", "tbsp", "oz", "oz", "cup"];
+      const units = [...unitShort, "g", "kg", "pound"];
+
+      //1 ინგრედიენტების ტექსტის დამოკლება მასივის ელემენტის მიხედვით
+      let ingredient = el.toLowerCase();
+      unitsLong.forEach((element, index) => {
+        ingredient = ingredient.replace(element, unitShort[index]);
+      });
+
+      //2) ფრჩხილების წაშლა ჩანაწერში ()
+      ingredient = ingredient.replace(/ *\(([^)]*)\) */g, " "); //regular expreshen -ით ფრჩხილებს ვაქრობთ და რაც შიგნით წერია მაგ (მაგალითად )
+
+      //3) დავსპლიტოთ ტექსტი და ამოვიღოთ ქაუნთი და იუნითი
+
+      const ingArr = ingredient.split(" ");
+
+      const unitIndex = ingArr.findIndex((word) => units.includes(word));
+
+      let objIng = {
+        count: "",
+        unit: "",
+        ingredient: "",
+      };
+      if (unitIndex > -1) {
+        const arrCount = ingArr.slice(0, unitIndex); //ამოჭრის 0 დან ინდექსამდე ანუ count da unit ['4','1/2']
+
+        let count;
+        if (arrCount.length === 1) {
+          count = eval(arrCount[0]); //[4] |  [1/2]
+        } else {
+          count = eval(arrCount.join("+")); //[4,1/2]
+        }
+        objIng = {
+          count,
+          unit: ingArr[unitIndex],
+          ingredient: ingArr.slice(unitIndex + 1).join(" "), // ინგრედიენტი დარჩება იუნიტის ინდექსს პლიუს ერთის შემდეგ ყველაფერი მითითება არ ჭირდება და ბოლომდე გაიტანს
+        };
+      } else if (+ingArr[0]) {
+        // თუ იწყება რიცხვით პირდაპირ შევამოწმებთ 1 ელემენტი თუ რიცხვია თუ არ არის რიცხვი რადგან რიცხვში გადაგვყავს + ნიშნით გამოიტანს NAN ნან ბულენაში არის false
+        objIng = {
+          count: +ingArr[0],
+          unit: " ",
+          ingredient: ingArr.slice(1).join(" "),
+        };
+      } else if (unitIndex === -1) {
+        //თუ მინუს ერთია ინდეხქსი ესეგი არ მოიძებნა დამთხვევა units გ კგ ასშ , იმხოლოდ ინგრედიენტი გვაქ   და ხელით ვუთითებთ 1 , '' , და ინგრედიენტებს
+        objIng = {
+          count: 1,
+          unit: " ",
+          ingredient, // ingredient: ingredient, იგივეა
+        };
+      }
+      return objIng;
+    });
+    this.ingredients = newIngredient;
+  }
 }

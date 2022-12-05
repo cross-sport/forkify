@@ -41,6 +41,8 @@ const controlRecipe = async () => {
     //call api receive query
     state.recipe = new Recipe(id);
     await state.recipe.getRecipe();
+
+    state.recipe.parseIngredients();
     clearLoader(elements.Recipe);
     // renderRecipe(state.recipe);
     recipeView.renderRecipe(state.recipe);
