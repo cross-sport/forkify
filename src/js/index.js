@@ -41,8 +41,12 @@ const controlRecipe = async () => {
     //call api receive query
     state.recipe = new Recipe(id);
     await state.recipe.getRecipe();
-
+    // ingredients in number -> count ,unit, ingredients
     state.recipe.parseIngredients();
+    // calc time and serving პერსონა და დრო
+    state.recipe.calcTime();
+    state.recipe.calcServings();
+
     clearLoader(elements.Recipe);
     // renderRecipe(state.recipe);
     recipeView.renderRecipe(state.recipe);
@@ -55,7 +59,7 @@ elements.searchForm.addEventListener("submit", (e) => {
 });
 
 elements.serchResultPages.addEventListener("click", (e) => {
-  const btn = e.target.closest(".btn-inline"); //onclick ზე დაჭერისას მის უახლოეს კლასს უყურებს რადგან .btn-inlinea ამუშავდება და რაც data-goto ში იქნება იმას წაოიღებს
+  const btn = e.target.closest(".btn-inline"); //onclick ზე დაჭერისას მის უახლოეს კლასს უყურებს რადგან .btn-inlinea ამუშავდება და რაც htmlში searcheView.js data-goto ში იქნება იმას წაოიღებს
   if (btn) {
     const goToPage = +btn.dataset.goto;
     searchView.clearResult();
@@ -67,3 +71,13 @@ window.addEventListener("hashchange", () => {
   controlRecipe();
 });
 window.addEventListener("load", controlRecipe);
+
+//+ - პერსონაზე ამუშავება
+
+elements.Recipe.addEventListener("click", (e) => {
+  if (e.target.matches(".btn-increase *")) {
+    console.log("+");
+  } else if (e.target.matches(".btn-decrease *")) {
+    console.log("-");
+  }
+});
