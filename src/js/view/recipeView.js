@@ -1,6 +1,32 @@
 import { elements } from "./base";
+import { Fraction } from "fractional"; //npm fraction 0.5->1/2 აბრუნებს დოკუმენტაცია npm ზე
+// var Fraction = require("fractional").Fraction;  ესეც სწორია
 
 export const clearRecipe = () => (elements.Recipe.innerHTML = "");
+
+const formatCount = (count) => {
+  //count= 2.5 --> 2 1/2
+  //count= 0.5 -->  1/2
+  //count= 2 --> 2
+
+  if (count) {
+    const [int, dec] = count
+      .toString()
+      .split(".")
+      .map((el) => +el); // 2.5 -> '2.5' -> ['2', '5']-> [2 , 5]->  int=2 dec =5
+
+    if (!dec) return count;
+
+    if (int === 0) {
+      const fr = new Fraction(count); //[0,5] -> 0 რადგანაა დარჩა წილადი 0.5 ამას fraction ერევა და გამოვა 1/2
+      return `${fr.numerator}/${fr.denominator}`;
+    } else {
+      const fr = new Fraction(count - int);
+      return `${dec} ${fr.numerator}/${fr.denominator}`;
+    }
+  }
+  return "?";
+};
 const createIngredient = (ingredientArgs) => `
 <li class="recipe__item">
 <svg class="recipe__icon">
@@ -103,4 +129,17 @@ export const renderRecipe = (recipe) => {
             </div>
 `;
   elements.Recipe.insertAdjacentHTML("afterbegin", markup);
+};
+
+export const updateServingsIngredients = (recipe) => {
+  //update servings
+  document.querySelector(".recipe__info-data--people").textContent =
+    recipe.servings;
+
+  //update ingredients
+  // const countElements=Array.from(document.querySelectorAll(".recipe__count"))
+  const countElements = [...document.querySelectorAll(".recipe__count")];
+  countElements.forEach((el, index) => {
+    el.textContent = formatCount(recipe.ingredients[index].count);
+  });
 };
