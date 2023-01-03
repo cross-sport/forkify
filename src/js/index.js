@@ -1,10 +1,12 @@
 // Global app controller
+import List from "./models/List";
 import Recipe from "./models/Recipe";
 import Search from "./models/Search";
+import Like from "./models/Like";
 import { clearLoader, elements, renderLoader } from "./view/base"; // import დესტრუქტურიზაციის ხასიათით
 // import { renderRecipe } from "./view/recipeView";
 import * as recipeView from "./view/recipeView";
-
+import * as listView from "./view/listView";
 import * as searchView from "./view/searchView"; //import
 
 const state = {};
@@ -53,6 +55,27 @@ const controlRecipe = async () => {
   }
 };
 
+//Shoping list
+
+const controllerList = () => {
+  // create new list if list do not created yeat
+  if (!state.list) {
+    state.list = new List();
+  } else {
+    state.list.clearList();
+  }
+  // cleare listView
+  listView.clearShoppingList();
+  //add each ingredients
+
+  // console.log(state.list.length);
+  // state.list.length > 0 ? (state.list = []) : null;
+  state.recipe.ingredients.forEach((el) => {
+    const item = state.list.addItems(el.count, el.unit, el.ingredient);
+    listView.renderItem(item);
+  });
+};
+
 elements.searchForm.addEventListener("submit", (e) => {
   e.preventDefault();
   controlSearch();
@@ -72,6 +95,27 @@ window.addEventListener("hashchange", () => {
 });
 window.addEventListener("load", controlRecipe);
 
+//like list add თუ იდ არ არსებობს სტეითში მაშინ ვამატებთ ელემენტს
+
+const controllerLike = () => {
+  if (!state.likes) state.likes = new Like(); // list არ შეიძლება იყოს განსხვავებული კლასის სახელიდან
+  const currentID = state.recipe.id;
+
+  if (!state.likes.isLiked(currentID)) {
+    //add likes to the state
+    const newLike = state.likes.addLike(
+      // const ით აღწერას იმიტო ვაკეტებთ რო რადგან like.js ში ეს ფუნქცია აბრუნებს იგივე პარამეტრებს სტეითში რო არ ვეძიოთ მერე ამას ავღწერთ ამ პარამეტრში და გამოვიყენებთ UI სთვის
+      currentID,
+      state.recipe.title,
+      state.recipe.author,
+      state.recipe.img
+    );
+  } else {
+    // თუ არსებობს ელემენტი წავშალოთ delete
+    state.likes.deleteLike(currentID);
+  }
+};
+
 //+ - პერსონაზე ამუშავება
 
 elements.Recipe.addEventListener("click", (e) => {
@@ -83,5 +127,24 @@ elements.Recipe.addEventListener("click", (e) => {
       state.recipe.updateServings("dec");
       recipeView.updateServingsIngredients(state.recipe);
     }
+  } else if (e.target.matches(".recipe__btn_add, .recipe__btn_add *")) {
+    controllerList();
+  } else if (e.target.matches(".recipe__love, .recipe__love *")) {
+    controllerLike();
+  }
+});
+
+//shoping list delete update
+elements.shopping.addEventListener("click", (e) => {
+  const id = e.target.closest(".shopping__item").dataset.itemid;
+  if (e.target.matches(".shopping__delete, .shopping__delete *")) {
+    //delete in list
+    state.list.deleteItem(id);
+    // delete on UI
+    listView.deleteItem(id);
+  } else if (e.target.matches(".shopping__count, .shopping__count *")) {
+    //update count
+    const val = +e.target.value;
+    state.list.updateCount(id, val);
   }
 });
