@@ -7,6 +7,7 @@ import { clearLoader, elements, renderLoader } from "./view/base"; // import დ
 // import { renderRecipe } from "./view/recipeView";
 import * as recipeView from "./view/recipeView";
 import * as listView from "./view/listView";
+import * as likesView from "./view/likesView";
 import * as searchView from "./view/searchView"; //import
 
 const state = {};
@@ -51,7 +52,7 @@ const controlRecipe = async () => {
 
     clearLoader(elements.Recipe);
     // renderRecipe(state.recipe);
-    recipeView.renderRecipe(state.recipe);
+    recipeView.renderRecipe(state.recipe, state.likes.isLiked(id));
   }
 };
 
@@ -93,7 +94,12 @@ elements.serchResultPages.addEventListener("click", (e) => {
 window.addEventListener("hashchange", () => {
   controlRecipe();
 });
-window.addEventListener("load", controlRecipe);
+
+// ბრაუზერის რეფრეშის დროს ლოადერი
+window.addEventListener("load", () => {
+  state.likes = new Like();
+  controlRecipe();
+});
 
 //like list add თუ იდ არ არსებობს სტეითში მაშინ ვამატებთ ელემენტს
 
@@ -110,9 +116,20 @@ const controllerLike = () => {
       state.recipe.author,
       state.recipe.img
     );
+    // toggle button on
+    likesView.toggleLikeBtn(true);
+
+    //UI მხარეს გამოტანა
+    likesView.renderLike(newLike);
   } else {
     // თუ არსებობს ელემენტი წავშალოთ delete
     state.likes.deleteLike(currentID);
+
+    // toggle button off
+    likesView.toggleLikeBtn(false);
+
+    // delete item
+    likesView.deleteLike(currentID);
   }
 };
 
