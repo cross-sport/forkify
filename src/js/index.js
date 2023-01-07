@@ -91,6 +91,11 @@ elements.serchResultPages.addEventListener("click", (e) => {
   }
 });
 
+//like list in reload
+const reloadLikes = (like) => {
+  like.forEach((el) => likesView.renderLike(el));
+};
+
 window.addEventListener("hashchange", () => {
   controlRecipe();
 });
@@ -98,6 +103,10 @@ window.addEventListener("hashchange", () => {
 // ბრაუზერის რეფრეშის დროს ლოადერი
 window.addEventListener("load", () => {
   state.likes = new Like();
+
+  state.likes.readStorage();
+  reloadLikes(state.likes.likes); // ლაიქების მასივს ვაწოდებ ფუნქციას state ში likes-> likes
+  likesView.toggleLikeMenu(state.likes.getLikeNumber());
   controlRecipe();
 });
 
@@ -121,6 +130,9 @@ const controllerLike = () => {
 
     //UI მხარეს გამოტანა
     likesView.renderLike(newLike);
+
+    //like menu visible
+    likesView.toggleLikeMenu(state.likes.getLikeNumber());
   } else {
     // თუ არსებობს ელემენტი წავშალოთ delete
     state.likes.deleteLike(currentID);
@@ -130,6 +142,9 @@ const controllerLike = () => {
 
     // delete item
     likesView.deleteLike(currentID);
+
+    //like menu visible
+    likesView.toggleLikeMenu(state.likes.getLikeNumber());
   }
 };
 

@@ -8,6 +8,10 @@ export const toggleLikeBtn = (isLiked) => {
     .setAttribute("href", `img/icons.svg#${iconStr}`); // recipe__love - ის use ტეგში set atribut ანუ ამ ატრიბუტში href ატრიბუტში ვცვლი კონტენტს
 };
 
+export const toggleLikeMenu = (numLikes) => {
+  elements.likesMenu.style.visibility = numLikes > 0 ? "visible" : "hidden";
+};
+
 export const renderLike = (like) => {
   const markup = `
   <li>

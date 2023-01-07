@@ -26,5 +26,12 @@ export default class Like {
     localStorage.setItem("like", JSON.stringify(this.likes)); //localstorage ჩასმა
   }
 
-  readStorage() {}
+  readStorage() {
+    const storage = JSON.parse(localStorage.getItem("like"));
+    if (storage) this.likes = storage;
+  }
+
+  getLikeNumber() {
+    return this.likes.length;
+  }
 }
